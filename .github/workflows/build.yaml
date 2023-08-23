@@ -1,0 +1,32 @@
+name: build
+
+on:
+  push:
+    tags: ["*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build-switch:
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkita64
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Set workspace permissions
+      run: |
+        chown $(id -u):$(id -g) -R "$GITHUB_WORKSPACE"
+        git config --system --add safe.directory '*'
+    - name: Build TriPlayer
+      run: |
+        make -j$(nproc)
+        cd sdcard
+        zip -9 triplayer.zip -r *
+    - name: Release and Upload Assets
+      uses: softprops/action-gh-release@v1
+      with:
+        name: TriPlayer ${{ github.ref_name }}
+        files: sdcard/triplayer.zip
