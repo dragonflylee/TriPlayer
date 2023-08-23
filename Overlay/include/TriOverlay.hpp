@@ -19,10 +19,10 @@ class TriOverlay : public tsl::Overlay {
         TriOverlay();
 
         // Initialize all services required by the overlay
-        void initServices();
+        void initServices() override;
 
         // Stop any started services
-        void exitServices();
+        void exitServices() override;
 
         // Determine the GUI frame to show based on result of services
         std::unique_ptr<tsl::Gui> loadInitialGui();
